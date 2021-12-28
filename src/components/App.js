@@ -6,6 +6,26 @@ import PetBrowser from "./PetBrowser";
 function App() {
   const [pets, setPets] = useState([]);
   const [filters, setFilters] = useState({ type: "all" });
+  
+  function handleChangeType(e){
+    setFilters({type: e.target.value})
+    console.log(e.target.value)
+  }
+
+  function handleFindPetsClick(){
+    fetch("http://localhost:3001/pets")
+    .then(response => response.json())
+    .then(data=> handleFilterPets(data))
+  }
+
+  function handleFilterPets(animals){
+    const results= animals.filter((animal)=>{
+      return (
+      animal.type === filters.type )
+    })
+    setPets(results)
+  }
+
 
   return (
     <div className="ui container">
@@ -15,10 +35,10 @@ function App() {
       <div className="ui container">
         <div className="ui grid">
           <div className="four wide column">
-            <Filters />
+            <Filters onChangeType={handleChangeType} onFindPetsClick={handleFindPetsClick}/>
           </div>
           <div className="twelve wide column">
-            <PetBrowser />
+            <PetBrowser pets={pets}/>
           </div>
         </div>
       </div>
